@@ -20,76 +20,61 @@ public class EventService {
     private EventRequestDto requestDto;
     private final EventLogRepository eventLogRepository;
 
-    //////////////////////// 이벤트 기록 저장 ////////////////////////
+    /* 이벤트 기록 저장 */
     public void saveEvent(EventRequestDto requestDto){
-        setEventRequestDto(requestDto);
-        isValidEvent(); // 유효성 체크
-        EventLog log = EventLog.createWithPoint(requestDto, calculatePoint()); // 로그를 만든다
-        eventLogRepository.save(log); // 저장한다
+        assignEventRequestDto(requestDto);
+        checkEventValidation();
+        EventLog log = EventLog.createWithPoint(requestDto, getPoint());
+        eventLogRepository.save(log);
     }
 
-    private void setEventRequestDto(EventRequestDto requestDto){
+    private void assignEventRequestDto(EventRequestDto requestDto){
         this.requestDto = requestDto;
     }
 
-    //////////////////////// 유효성 검사 ////////////////////////
-    private void isValidEvent(){
-        isValidType();
-        isExistsReview();
+    /* 유효성 검사 */
+    private void checkEventValidation(){
+        checkTypeValidation();
+        checkReviewExisting();
     }
 
-    private void isValidType(){
+    private void checkTypeValidation(){
         if ( this.requestDto.getType() == null )
             throw new CustomException(NOT_FOUND_EVENT_TYPE);
     }
 
-    private void isExistsReview(){
+    private void checkReviewExisting(){
         if ( eventLogRepository.existsByPlaceIdAndUserId(
                 this.requestDto.getPlaceId(),
                 this.requestDto.getUserId())
         )
-            throw new CustomException(ALREADY_EXISTS_REVIEW);// 다시 설계해야함, ADD 되었을 때의 예외 처리가 정확히 되어 있지 않다.
+            throw new CustomException(ALREADY_EXISTS_REVIEW);
     }
 
-    //////////////////////// 포인트 계산 ////////////////////////
-    private int calculatePoint(){
+    /* 포인트 계산 */
+    private int getPoint(){
 
         switch (this.requestDto.getAction()) {
-            case ADD:
-                return calculateAddType();
-            case DELETE:
-                return calculateDeleteType();
-            case MOD:
-                return calculateModType();
-            default:
-                throw new CustomException(INVALID_ACTION_NAME);
+            case ADD: return getPointWhenAdd();
+            case MOD: return getPointWhenMod();
+            case DELETE: return getPointWhenDelete();
+            default: throw new CustomException(INVALID_ACTION_NAME);
         }
     }
 
-    private int calculateAddType(){
-        return getPointByFirstReview() + getPointByContentLenth() + getPointByPhotoIdsSize();
+    private int getPointWhenAdd(){
+        return getPointByContentLength() + getPointByPhotoIdsSize() + getPointWhenFirstReview();
     }
 
-    private int calculateDeleteType(){
+    private int getPointWhenMod(){
+        return getPointByContentLength() + getPointByPhotoIdsSize();
+    }
+
+    private int getPointWhenDelete(){
         return 0;
     }
 
-    private int calculateModType(){
-        return getPointByContentLenth() + getPointByPhotoIdsSize();
-    }
-
-    private int getPointByFirstReview(){
-        if (eventLogRepository
-                .existsByPlaceIdAndActionNot(
-                        this.requestDto.getPlaceId(),
-                        this.requestDto.getAction())){
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    private int getPointByContentLenth(){
+    private int getPointByContentLength(){
         if (this.requestDto.getContent().length() >= 1 ) { return 1; }
         else { return 0; }
     }
@@ -99,9 +84,19 @@ public class EventService {
         else { return 0; }
     }
 
-    // 포인트 총합 계산
-    public int getTotalPoint(String userId){ // DB 조회 시에 특정 값만 가져올 수 있는지?
-        // 중복이 없이, 해당 reviewId 중 가장 최근의 값만 가져올 수 있어야 한다.
+    private int getPointWhenFirstReview(){
+        if (eventLogRepository.existsByPlaceIdAndActionNot(
+                this.requestDto.getPlaceId(),
+                this.requestDto.getAction())){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /* 포인트 총합 계산 */
+    public int calculateTotalPoint(String userId){
+
         List<PointLog> points = eventLogRepository.findAllPointByUserId(userId);
 
         return points
@@ -110,7 +105,4 @@ public class EventService {
                 .mapToInt(PointLog::getPoint)
                 .sum();
     }
-
-
-
 }

@@ -25,30 +25,23 @@ public class EventLog {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private String userId;
 
-    @Column(nullable = false)
     private String placeId;
 
-    @Column(nullable = false)
     private String reviewId;
 
-    @Column(nullable = false)
+    @Column(length = 1000)
     private String attachedPhotoIds;
 
-    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EventTypeEnum type;
 
-    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EventActionEnum action;
 
-    @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     private Integer point;
 
     @CreatedDate
@@ -63,7 +56,7 @@ public class EventLog {
                 .userId(requestDto.getUserId())
                 .placeId(requestDto.getPlaceId())
                 .reviewId(requestDto.getReviewId())
-// 그림 저장 추가해라
+                .attachedPhotoIds(requestDto.getAttachedPhotoIds().toString())
                 .type(requestDto.getType())
                 .action(requestDto.getAction())
                 .content(requestDto.getContent())
