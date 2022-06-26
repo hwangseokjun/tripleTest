@@ -28,7 +28,7 @@ public class EventService {
         eventLogRepository.save(log);
     }
 
-    private void assignEventRequestDto(EventRequestDto requestDto){
+    private void assignEventRequestDto(EventRequestDto requestDto){ // EventRequestDto 할당
         this.requestDto = requestDto;
     }
 
@@ -38,12 +38,12 @@ public class EventService {
         checkReviewExisting();
     }
 
-    private void checkTypeValidation(){
+    private void checkTypeValidation(){ // EventType 검증
         if ( this.requestDto.getType() == null )
             throw new CustomException(NOT_FOUND_EVENT_TYPE);
     }
 
-    private void checkReviewExisting(){
+    private void checkReviewExisting(){ // 리뷰 중복 등록 검증
         if ( eventLogRepository.existsByPlaceIdAndUserId(
                 this.requestDto.getPlaceId(),
                 this.requestDto.getUserId())
@@ -62,36 +62,37 @@ public class EventService {
         }
     }
 
-    private int getPointWhenAdd(){
+    private int getPointWhenAdd(){ // ADD 일 때의 획득 포인트 계산
         return getPointByContentLength() + getPointByPhotoIdsSize() + getPointWhenFirstReview();
     }
 
-    private int getPointWhenMod(){
+    private int getPointWhenMod(){ // MOD 일 때의 획득 포인트 계산
         return getPointByContentLength() + getPointByPhotoIdsSize();
     }
 
-    private int getPointWhenDelete(){
+    private int getPointWhenDelete(){ // DELETE 일 때의 획득 포인트 계산
         return 0;
     }
 
-    private int getPointByContentLength(){
+    private int getPointByContentLength(){ // ContentLength에 따른 보너스 포인트 부여
         if (this.requestDto.getContent().length() >= 1 ) { return 1; }
         else { return 0; }
     }
 
-    private int getPointByPhotoIdsSize(){
+    private int getPointByPhotoIdsSize(){ // PhotoIdsSize에 따른 보너스 포인트 부여
         if (this.requestDto.getAttachedPhotoIds().size() >= 1) { return 1; }
         else { return 0; }
     }
 
-    private int getPointWhenFirstReview(){
+    private int getPointWhenFirstReview(){ // 장소에 대한 첫 리뷰 보너스 포인트 부여
+
+        int point = 0;
+
         if (eventLogRepository.existsByPlaceIdAndActionNot(
-                this.requestDto.getPlaceId(),
-                this.requestDto.getAction())){
-            return 1;
-        } else {
-            return 0;
-        }
+                this.requestDto.getPlaceId(), this.requestDto.getAction())
+        ) point++;
+
+        return point;
     }
 
     /* 포인트 총합 계산 */
