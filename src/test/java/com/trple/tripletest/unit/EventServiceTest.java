@@ -1,24 +1,26 @@
-package com.trple.tripletest.service;
+package com.trple.tripletest.unit;
 
+import com.trple.tripletest.dto.EventRequestDto;
 import com.trple.tripletest.exception.CustomException;
+import com.trple.tripletest.model.Event;
 import com.trple.tripletest.model.Point;
 import com.trple.tripletest.repository.EventRepository;
-import com.trple.tripletest.dto.EventRequestDto;
-import com.trple.tripletest.model.Event;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static com.trple.tripletest.dto.EventActionEnum.*;
-import static com.trple.tripletest.exception.ErrorCode.*;
+import static com.trple.tripletest.dto.EventActionEnum.DELETE;
+import static com.trple.tripletest.exception.ErrorCode.ALREADY_EXISTS_REVIEW;
+import static com.trple.tripletest.exception.ErrorCode.INVALID_ACTION_NAME;
 
-@Service
-@RequiredArgsConstructor
-public class EventService {
+@ExtendWith(MockitoExtension.class)
+class EventServiceTest {
 
+    @Mock
+    EventRepository eventRepository;
     private EventRequestDto requestDto;
-    private final EventRepository eventRepository;
 
     /* 이벤트 기록 저장 */
     public void saveEvent(EventRequestDto requestDto){

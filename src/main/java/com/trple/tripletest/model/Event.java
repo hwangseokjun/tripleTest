@@ -1,5 +1,6 @@
 package com.trple.tripletest.model;
 
+import com.trple.tripletest.utils.EventValidator;
 import com.trple.tripletest.dto.EventActionEnum;
 import com.trple.tripletest.dto.EventRequestDto;
 import com.trple.tripletest.dto.EventTypeEnum;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 @Table(indexes = {
         @Index(name = "idx_place", columnList = "placeId"),
         @Index(name = "idx_user", columnList = "userId")})
-public class EventLog {
+public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,7 @@ public class EventLog {
     @Enumerated(value = EnumType.STRING)
     private EventActionEnum action;
 
+    @Column(length = 500)
     private String content;
 
     private Integer point;
@@ -50,9 +52,12 @@ public class EventLog {
     @Version
     private Integer version;
 
-    public static EventLog createWithPoint(EventRequestDto requestDto, int point){
+    public static Event createWithPoint(EventRequestDto requestDto, int point){
 
-        return EventLog.builder()
+        EventValidator validator = new EventValidator(requestDto);
+        validator.checkEventValidation();
+
+        return Event.builder()
                 .userId(requestDto.getUserId())
                 .placeId(requestDto.getPlaceId())
                 .reviewId(requestDto.getReviewId())
