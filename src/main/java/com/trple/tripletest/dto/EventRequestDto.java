@@ -1,6 +1,5 @@
 package com.trple.tripletest.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +7,6 @@ import java.util.ArrayList;
 
 @Getter
 @Builder
-@AllArgsConstructor
 public class EventRequestDto {
 
     private EventTypeEnum type;

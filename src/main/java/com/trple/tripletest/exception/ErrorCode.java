@@ -11,7 +11,8 @@ public enum ErrorCode {
     ALREADY_EXISTS_REVIEW(HttpStatus.BAD_REQUEST.value(), "002", "이미 리뷰를 등록하셨습니다."),
     NOT_FOUND_EVENT_TYPE(HttpStatus.BAD_REQUEST.value(), "003", "정확한 타입을 입력하세요. (REVIEW 허용)"),
     NOT_FOUND_UUID(HttpStatus.BAD_REQUEST.value(), "004", "UUID값이 없습니다."),
-    INVALID_UUID(HttpStatus.BAD_REQUEST.value(), "005", "UUID값이 유효하지 않습니다.");
+    INVALID_UUID(HttpStatus.BAD_REQUEST.value(), "005", "UUID값이 유효하지 않습니다."),
+    NOT_FOUND_REVIEW(HttpStatus.BAD_REQUEST.value(), "006", "리뷰를 찾을 수 없습니다.");
 
     private final int httpStatus;
     private final String code;

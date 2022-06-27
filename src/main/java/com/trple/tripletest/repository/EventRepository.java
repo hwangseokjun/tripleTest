@@ -2,18 +2,20 @@ package com.trple.tripletest.repository;
 
 import com.trple.tripletest.dto.EventActionEnum;
 import com.trple.tripletest.model.Event;
+import com.trple.tripletest.model.Place;
 import com.trple.tripletest.model.Point;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface EventRepository extends JpaRepository<Event, Long> {
 
-    Boolean existsByPlaceIdAndActionNot(String placeId, EventActionEnum action); // 잘못되었음. 수정 필요.
+    Optional<Place> findFirstByPlaceIdOrderByIdDesc(String placeId);
 
-    Boolean existsByPlaceIdAndUserId(String placeId, String UserId);
+    Optional<Place> findFirstByPlaceIdAndUserIdAndReviewIdOrderByIdDesc(String placeId, String userId, String reviewId);
 
     @Query( "SELECT event.point AS point, event.action AS action FROM Event event " +
             "WHERE event.id IN (SELECT MAX (id) FROM Event GROUP BY :userId)")

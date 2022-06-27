@@ -19,31 +19,38 @@ import java.time.LocalDateTime;
 @NoArgsConstructor @AllArgsConstructor
 @Table(indexes = {
         @Index(name = "idx_place", columnList = "placeId"),
-        @Index(name = "idx_user", columnList = "userId")})
+        @Index(name = "idx_user", columnList = "userId"),
+        @Index(name = "idx_review", columnList = "reviewId")})
 public class Event {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 36)
     private String userId;
 
+    @Column(nullable = false, length = 36)
     private String placeId;
 
+    @Column(nullable = false, length = 36)
     private String reviewId;
 
     @Column(length = 1000)
     private String attachedPhotoIds;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EventTypeEnum type;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private EventActionEnum action;
 
     @Column(length = 500)
     private String content;
 
+    @Column(nullable = false)
     private Integer point;
 
     @CreatedDate

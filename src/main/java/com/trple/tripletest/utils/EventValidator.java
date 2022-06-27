@@ -29,7 +29,6 @@ public class EventValidator {
     }
 
     private void checkValidationOf(String uuid){ // UUID 검증
-        if ( uuid == null ) throw new CustomException(NOT_FOUND_UUID);
         if ( !uuid.matches(this.regex) ) throw new CustomException(INVALID_UUID);
     }
 
