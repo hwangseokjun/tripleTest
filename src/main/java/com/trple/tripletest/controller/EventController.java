@@ -2,10 +2,12 @@ package com.trple.tripletest.controller;
 
 import com.trple.tripletest.dto.EventRequestDto;
 import com.trple.tripletest.dto.EventResponseDto;
-import com.trple.tripletest.model.Event;
 import com.trple.tripletest.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +21,12 @@ public class EventController {
     }
 
     @GetMapping("/events/{userId}")
-    public int getTotalPoint(@PathVariable String userId){
-        return eventService.calculateTotalPoint(userId);
+    public Map<String, Integer> getTotalPoint(@PathVariable String userId){
+
+        Map<String, Integer> totalPointMap = new HashMap<>();
+        totalPointMap.put("point", eventService.calculateTotalPoint(userId));
+
+        return totalPointMap;
     }
 
 }
